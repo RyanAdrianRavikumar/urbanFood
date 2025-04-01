@@ -1,0 +1,23 @@
+----GET PRODUCT DATA BY PRODUCT ID----
+CREATE OR REPLACE PROCEDURE GetProductDetails(
+    p_product_id IN NUMBER,
+    p_name OUT VARCHAR2,
+    p_category OUT VARCHAR2,
+    p_price OUT NUMBER,
+    p_stock OUT NUMBER
+) AS 
+BEGIN
+    SELECT product_name, product_category, price, available_stock 
+    INTO p_name, p_category, p_price, p_stock
+    FROM Products
+    WHERE product_id = p_product_id;
+    
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+	DBMS_OUTPUT.PUT_LINE('Record not found');
+        p_name := 'Not Found';
+        p_category := 'Not Found';
+        p_price := 0;
+        p_stock := 0;
+END;
+/
