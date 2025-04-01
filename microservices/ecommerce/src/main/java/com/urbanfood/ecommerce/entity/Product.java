@@ -14,7 +14,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private int supplierId;
+    private int productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id")
@@ -94,11 +94,11 @@ public class Product {
         this.supplier = supplier;
     }
 
-    public int getSupplierId() {
-        return supplierId;
+    public int getProductId() {
+        return productId;
     }
 
-    public void setSupplierId(int supplierId) {
-        this.supplierId = supplierId;
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 }

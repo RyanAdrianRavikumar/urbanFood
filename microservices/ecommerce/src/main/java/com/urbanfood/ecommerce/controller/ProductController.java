@@ -1,12 +1,11 @@
 package com.urbanfood.ecommerce.controller;
 
 
+import com.urbanfood.ecommerce.entity.Product;
 import com.urbanfood.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -26,5 +25,16 @@ public class ProductController {
     @GetMapping(path = "/products")
     public List<Map<String, Object>> getAllProducts(){
         return productService.getAllProducts();
+    }
+
+    @PutMapping(path = "/products/{productId}")
+    public String updateProductDetails(@PathVariable int productId, @RequestBody Product product){
+        return productService.updateProductDetails(
+                productId,
+                product.getProductName(),
+                product.getProductCategory(),
+                product.getPrice(),
+                product.getAvailableStock()
+        );
     }
 }

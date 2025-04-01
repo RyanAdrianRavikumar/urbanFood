@@ -5,14 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 @Repository
 public class ProductRepository {
@@ -25,13 +19,9 @@ public class ProductRepository {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            // Log the input productId
-            System.out.println("Received productId: " + productId);
+            Connection connection = jdbcTemplate.getDataSource().getConnection();
+            statement = connection.prepareCall("{call GetProductDetails(?, ?, ?, ?, ?, ?)}");
 
-            // Open a connection to the database and prepare the statement
-            statement = jdbcTemplate.getDataSource().getConnection().prepareCall("{call GetProductDetails(?, ?, ?, ?, ?)}");
-
-            // Set the input parameter
             statement.setInt(1, productId);
 
             // Register output parameters
@@ -39,39 +29,38 @@ public class ProductRepository {
             statement.registerOutParameter(3, Types.VARCHAR);
             statement.registerOutParameter(4, Types.NUMERIC);
             statement.registerOutParameter(5, Types.NUMERIC);
+            statement.registerOutParameter(6, Types.BLOB); // Register BLOB output
 
-            // Execute the stored procedure
+            // Execute stored procedure
             statement.execute();
 
-            // Log the outputs for debugging
+            // Retrieve output values
             String productName = statement.getString(2);
             String productCategory = statement.getString(3);
             BigDecimal price = statement.getBigDecimal(4);
             int stock = statement.getInt(5);
+            Blob imageBlob = statement.getBlob(6); // Get BLOB
 
-            System.out.println("Product Name: " + productName);
-            System.out.println("Product Category: " + productCategory);
-            System.out.println("Price: " + price);
-            System.out.println("Stock: " + stock);
+            // Convert BLOB to Base64 if it exists
+            String base64Image = null;
+            if (imageBlob != null) {
+                byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
+                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            }
 
-            // Populate the result map
+            // Populate result map
             result.put("product_name", productName);
             result.put("product_category", productCategory);
             result.put("price", price);
             result.put("stock", stock);
+            result.put("product_image", base64Image);
 
         } catch (SQLException e) {
-            // Log the error if the procedure call fails
             e.printStackTrace();
-            result.put("product_name", "Not Found");
-            result.put("product_category", "Not Found");
-            result.put("price", 0);
-            result.put("stock", 0);
+            result.put("error", "Product not found");
         } finally {
             try {
-                if (statement != null) {
-                    statement.close();
-                }
+                if (statement != null) statement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -109,6 +98,18 @@ public class ProductRepository {
                 product.put("product_category", rs.getString("product_category"));
                 product.put("price", rs.getBigDecimal("price"));
                 product.put("available_stock", rs.getInt("available_stock"));
+
+                // Fetch the image data (assuming the column name is 'product_image')
+                byte[] imageBytes = rs.getBytes("product_image");
+
+                // Convert image bytes to a Base64 string if required
+                if (imageBytes != null) {
+                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                    product.put("product_image", base64Image); // Add the Base64 image to the map
+                } else {
+                    product.put("product_image", null); // If no image, add null
+                }
+
                 products.add(product);
             }
 
@@ -130,4 +131,28 @@ public class ProductRepository {
 
         return products;
     }
+
+
+    public String updateProductDetails(int productId, String productName, String productCategory, double price, int availableStock) {
+        String sql = "{call UpdateProductById(?, ?, ?, ?, ?)}";
+
+        return jdbcTemplate.execute(connection -> {
+            CallableStatement statement = connection.prepareCall(sql);
+            statement.setInt(1, productId);
+            statement.setString(2, productName);
+            statement.setString(3, productCategory);
+            statement.setDouble(4, price);
+            statement.setInt(5, availableStock);
+            return statement;
+        }, (CallableStatement cs) -> {
+            try {
+                cs.execute();
+                return "Product details updated successfully";
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return "Error updating product details";
+            }
+        });
+    }
+
 }

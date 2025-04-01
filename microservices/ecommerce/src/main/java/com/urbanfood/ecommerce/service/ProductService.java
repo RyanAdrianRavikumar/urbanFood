@@ -20,4 +20,8 @@ public class ProductService {
     public List<Map<String, Object>> getAllProducts(){
         return productRepository.getAllProducts();
     }
+
+    public String updateProductDetails(int productId, String productName, String productCategory, double price, int availableStock){
+        return productRepository.updateProductDetails(productId, productName, productCategory, price, availableStock);
+    }
 }
