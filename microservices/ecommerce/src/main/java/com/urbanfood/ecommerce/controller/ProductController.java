@@ -37,4 +37,14 @@ public class ProductController {
                 product.getAvailableStock()
         );
     }
+
+    @GetMapping(path = "/products/name/{productName}")
+    public Map<String, Object> getProductDetailsByName(@PathVariable String productName) {
+        return productService.getProductDetailsByName(productName);
+    }
+
+    @DeleteMapping(path = "/products/{productId}")
+    public String deleteProductById(@PathVariable int productId) {
+        return productService.deleteProductById(productId);
+    }
 }

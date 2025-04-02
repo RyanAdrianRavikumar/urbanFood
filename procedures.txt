@@ -1,23 +1,64 @@
-----GET PRODUCT DATA BY PRODUCT ID----
-CREATE OR REPLACE PROCEDURE GetProductDetails(
+-----------get all products---------------------------------------------
+create or replace NONEDITIONABLE PROCEDURE GetAllProducts (
+    p_cursor OUT SYS_REFCURSOR  
+) AS
+BEGIN
+    OPEN p_cursor FOR
+    SELECT * FROM Products;
+END;
+
+---------get product details by id-----------------------------------------
+create or replace NONEDITIONABLE PROCEDURE GetProductDetails( 
     p_product_id IN NUMBER,
     p_name OUT VARCHAR2,
     p_category OUT VARCHAR2,
     p_price OUT NUMBER,
-    p_stock OUT NUMBER
+    p_stock OUT NUMBER,
+    p_image OUT BLOB  
 ) AS 
 BEGIN
-    SELECT product_name, product_category, price, available_stock 
-    INTO p_name, p_category, p_price, p_stock
+    -- Log the incoming product_id
+    DBMS_OUTPUT.PUT_LINE('Received product_id: ' || p_product_id);
+    
+    SELECT product_name, product_category, price, available_stock, product_image 
+    INTO p_name, p_category, p_price, p_stock, p_image  
     FROM Products
     WHERE product_id = p_product_id;
+
     
+    DBMS_OUTPUT.PUT_LINE('Product Name: ' || p_name);
+    DBMS_OUTPUT.PUT_LINE('Product Category: ' || p_category);
+    DBMS_OUTPUT.PUT_LINE('Price: ' || p_price);
+    DBMS_OUTPUT.PUT_LINE('Stock: ' || p_stock);
+    DBMS_OUTPUT.PUT_LINE('Product Image Retrieved.');
+
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-	DBMS_OUTPUT.PUT_LINE('Record not found');
-        p_name := 'Not Found';
-        p_category := 'Not Found';
-        p_price := 0;
-        p_stock := 0;
+        p_name := NULL;
+        p_category := NULL;
+        p_price := NULL;
+        p_stock := NULL;
+        p_image := NULL; 
+        DBMS_OUTPUT.PUT_LINE('No product found for ID: ' || p_product_id);
+
+    WHEN OTHERS THEN
+        p_name := NULL;
+        p_category := NULL;
+        p_price := NULL;
+        p_stock := NULL;
+        p_image := NULL;
+        DBMS_OUTPUT.PUT_LINE('Error fetching product details: ' || SQLERRM);
 END;
-/
+
+-----------------update by id-----------------
+create or replace NONEDITIONABLE PROCEDURE updateProductById(
+    p_product_id IN NUMBER,
+    p_product_name IN VARCHAR2,
+    p_product_category IN VARCHAR2,
+    p_price IN NUMBER,
+    P_available_stock IN NUMBER
+) AS
+BEGIN
+    UPDATE products SET product_name = p_product_name, product_category = p_product_category, price = p_price, available_stock = P_available_stock 
+    WHERE product_id = p_product_id;
+END;

@@ -155,4 +155,87 @@ public class ProductRepository {
         });
     }
 
+    public Map<String, Object> getProductDetailsByName (String productName)
+    {
+        Map<String, Object> result = new HashMap<>();
+        CallableStatement statement = null;
+
+        try {
+            Connection connection = jdbcTemplate.getDataSource().getConnection();
+            statement = connection.prepareCall("{call GetProductDetailsByName(?, ?, ?, ?, ?, ?)}");
+
+            statement.setString(1, productName);
+
+            // Register output parameters
+            statement.registerOutParameter(2, Types.NUMERIC);
+            statement.registerOutParameter(3, Types.VARCHAR);
+            statement.registerOutParameter(4, Types.NUMERIC);
+            statement.registerOutParameter(5, Types.NUMERIC);
+            statement.registerOutParameter(6, Types.BLOB); // Register BLOB output
+
+            // Execute stored procedure
+            statement.execute();
+
+            // Retrieve output values
+            int productId = statement.getInt(2);         // product_id
+            String productCategory = statement.getString(3);           // category
+            BigDecimal price = statement.getBigDecimal(4);             // price
+            int stock = statement.getInt(5);                           // stock
+            Blob imageBlob = statement.getBlob(6);                     // image
+
+            // Convert BLOB to Base64 if it exists
+            String base64Image = null;
+            if (imageBlob != null) {
+                byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());
+                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            }
+
+            // Populate result map
+            result.put("product_name", productName);
+            result.put("product_category", productCategory);
+            result.put("price", price);
+            result.put("stock", stock);
+            result.put("product_image", base64Image);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public String deleteProductById(int productId) {
+        String status = "";
+        CallableStatement statement = null;
+
+        try {
+            Connection connection = jdbcTemplate.getDataSource().getConnection();
+            statement = connection.prepareCall("{call DeleteProductById(?, ?)}");
+
+            statement.setInt(1, productId);
+            statement.registerOutParameter(2, Types.VARCHAR); // status message used to return if it worked or not
+
+            statement.execute();
+            status = statement.getString(2);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            status = "Error occurred while trying to delete product.";
+        } finally {
+            try {
+                if (statement != null) statement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return status;
+    }
+
+
 }

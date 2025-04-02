@@ -24,4 +24,13 @@ public class ProductService {
     public String updateProductDetails(int productId, String productName, String productCategory, double price, int availableStock){
         return productRepository.updateProductDetails(productId, productName, productCategory, price, availableStock);
     }
+
+    public Map<String, Object> getProductDetailsByName(String productName) {
+        return productRepository.getProductDetailsByName(productName);
+    }
+
+    public String deleteProductById(int productId) {
+        return productRepository.deleteProductById(productId);
+    }
+
 }
