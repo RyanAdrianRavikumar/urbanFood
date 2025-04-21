@@ -8,18 +8,22 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supplier_id")
+    @Column(name = "SUPPLIER_ID")
     private int supplierId;
 
-    @Column(name = "supplier_name")
+    @Column(name = "SUPPLIER_NAME")
     private String supplierName;
 
-    @Column(name = "contact_information")
-    private String contactInformation;
+    @Column(name = "SUPPLIER_EMAIL")
+    private String supplierEmail;
 
-    @Column(name = "supplier_address")
+    @Column(name = "SUPPLIER_ADDRESS")
     private String supplierAddress;
 
+    @Column(name = "PASSWORD")
+    private String password;
+
+    // Getters and Setters
     public int getSupplierId() {
         return supplierId;
     }
@@ -36,12 +40,12 @@ public class Supplier {
         this.supplierName = supplierName;
     }
 
-    public String getContactInformation() {
-        return contactInformation;
+    public String getSupplierEmail() {
+        return supplierEmail;
     }
 
-    public void setContactInformation(String contactInformation) {
-        this.contactInformation = contactInformation;
+    public void setSupplierEmail(String supplierEmail) {
+        this.supplierEmail = supplierEmail;
     }
 
     public String getSupplierAddress() {
@@ -50,5 +54,13 @@ public class Supplier {
 
     public void setSupplierAddress(String supplierAddress) {
         this.supplierAddress = supplierAddress;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

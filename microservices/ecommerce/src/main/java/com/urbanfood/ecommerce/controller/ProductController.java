@@ -2,8 +2,10 @@ package com.urbanfood.ecommerce.controller;
 
 
 import com.urbanfood.ecommerce.entity.Product;
+import com.urbanfood.ecommerce.entity.ProductLowStockDTO;
 import com.urbanfood.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,5 +48,11 @@ public class ProductController {
     @DeleteMapping(path = "/products/{productId}")
     public String deleteProductById(@PathVariable int productId) {
         return productService.deleteProductById(productId);
+    }
+
+    @GetMapping(path = "/products/out-of-stock")
+    public ResponseEntity<List<ProductLowStockDTO>> getOutOfStockProducts() {
+        List<ProductLowStockDTO> products = productService.getOutOfStockProducts();
+        return ResponseEntity.ok(products);
     }
 }

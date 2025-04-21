@@ -1,11 +1,11 @@
 package com.urbanfood.ecommerce.controller;
 
+import com.urbanfood.ecommerce.entity.OrderRequestDTO;
+import com.urbanfood.ecommerce.service.OrderDetailsService;
 import com.urbanfood.ecommerce.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -13,19 +13,33 @@ import java.util.Map;
 @RestController
 public class OrderController {
 
+    private final OrderService orderService;
+
     @Autowired
-    private OrderService orderService;
+    OrderDetailsService orderDetailsService;
 
-    @PostMapping(path = "/customers/{customerId}/orders")
-    public String placeOrder(
-            @PathVariable int customerId,
-            @RequestBody Map<String, Object> orderData) {
-
-        double totalAmount = (double) orderData.get("totalAmount");
-        List<Map<String, Object>> orderItems = (List<Map<String, Object>>) orderData.get("orderItems");
-
-        int orderId = orderService.placeOrder(customerId, totalAmount, orderItems);
-
-        return "Order placed successfully with ID: " + orderId;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
+
+    @PostMapping("/customer/{customerId}/order")
+    public ResponseEntity<String> placeOrder(
+            @PathVariable int customerId,
+            @RequestBody OrderRequestDTO orderRequest) {
+
+        try {
+            orderRequest.setCustomerId(customerId);
+            int orderId = orderService.placeOrder(orderRequest);
+            return ResponseEntity.ok("Order placed successfully! Order ID: " + orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Order placement failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/customers/{customerId}/orders")
+    public List<Map<String, Object>> getOrderDetails(@PathVariable Long customerId) {
+        return orderDetailsService.getOrderDetails(customerId);
+    }
+
 }

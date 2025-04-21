@@ -98,6 +98,7 @@ public class ProductRepository {
                 product.put("product_category", rs.getString("product_category"));
                 product.put("price", rs.getBigDecimal("price"));
                 product.put("available_stock", rs.getInt("available_stock"));
+                product.put("supplier_id", rs.getInt("supplier_id"));
 
                 // Fetch the image data (assuming the column name is 'product_image')
                 byte[] imageBytes = rs.getBytes("product_image");
@@ -131,6 +132,7 @@ public class ProductRepository {
 
         return products;
     }
+
 
 
     public String updateProductDetails(int productId, String productName, String productCategory, double price, int availableStock) {
@@ -236,6 +238,5 @@ public class ProductRepository {
 
         return status;
     }
-
 
 }
