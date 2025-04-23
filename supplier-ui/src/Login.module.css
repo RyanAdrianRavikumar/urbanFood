@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Login.css'; // assuming your CSS is saved as Login.css
+
+const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    // Example authentication logic
+    if (email === 'admin@example.com' && password === 'admin123') {
+      // Navigate to the Products.jsx (admin) page
+      navigate('/admin/products');
+    } else {
+      setError('Invalid email or password');
+    }
+  };
+
+  const handleAdminClick = () => {
+    navigate('/admin/products');
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-left">
+        <h2>Welcome Back!</h2>
+        <p>Access your dashboard and manage your products efficiently.</p>
+      </div>
+
+      <div className="login-right">
+        <h2>Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          {error && <div className="error-message">{error}</div>}
+
+          <div className="options">
+            <div className="checkbox-wrapper">
+              <input type="checkbox" id="remember" />
+              <label htmlFor="remember">Remember me</label>
+            </div>
+            <a className="forgot-password" href="#">Forgot password?</a>
+          </div>
+
+          <button type="submit" className="login-button">Login</button>
+        </form>
+
+        {/* Admin Access Button */}
+        <button className="login-button" onClick={handleAdminClick} style={{ marginTop: '10px' }}>
+          Go to Admin Page
+        </button>
+
+        <div className="register-text">
+          Don't have an account? <a className="register-link" href="#">Register</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;

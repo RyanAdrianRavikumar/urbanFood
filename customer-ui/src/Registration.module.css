@@ -1,0 +1,90 @@
+/* Center the UI box with no extra top/bottom space */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Adjusted to avoid extra spaces */
+  padding: 10px;
+}
+
+/* Main registration box */
+.registerBox {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px; /* Compact width */
+  text-align: center;
+  /* Removed the box-shadow to remove the surrounding border */
+}
+
+/* Title styling */
+.title {
+  color: #ed4d38;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+/* Input fields */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.inputGroup label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 3px;
+}
+
+.inputGroup input {
+  width: 93%; /* Adjusted to make the text boxes use the full width */
+  padding: 10px;
+  border-radius: 20px; /* Oval shape */
+  border: 1px solid #ed4d38;
+  background-color: #f8f8f8;
+  outline: none;
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+.inputGroup input:focus {
+  background-color: #ffffff;
+  border: 2px solid #252525;
+}
+
+/* Register button */
+.registerButton {
+  width: 70%;
+  padding: 12px;
+  border: none;
+  border-radius: 20px; /* Oval shape */
+  background-color: #ed4d38;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 15px; /* Move the button down a bit */
+}
+
+.registerButton:hover {
+  background-color: #c53728;
+}
+
+/* Footer text */
+.footerText {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #333;
+}
+
+.footerText a {
+  color: #ed4d38;
+  text-decoration: none;
+}
+
+.footerText a:hover {
+  text-decoration: underline;
+}
